@@ -16,6 +16,7 @@ function loadStocks() {
     code: s.code,
     referencePrice: s.referencePrice,
     threshold: s.threshold || 0.4,
+    recoveryBuffer: s.recoveryBuffer || 0.05,  // 回升缓冲区，默认 5%
   }));
 }
 
@@ -42,6 +43,8 @@ async function sendAlert(stock, currentPrice, dropPct) {
     `**当前价格**: ¥${currentPrice.toFixed(2)}`,
     `**关注价格**: ¥${stock.referencePrice.toFixed(2)}`,
     `**跌幅**: ${(dropPct * 100).toFixed(1)}%`,
+    `**触发线**: ${(stock.threshold * 100).toFixed(0)}%`,
+    `**回升线**: ${((stock.threshold - stock.recoveryBuffer) * 100).toFixed(0)}%`,
     `**时间**: ${new Date().toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" })}`,
   ].join("\n\n");
 
@@ -116,8 +119,9 @@ async function main() {
 
     const ref = stock.referencePrice;
     const dropPct = (ref - price) / ref;
+    const recoveryLine = stock.threshold - stock.recoveryBuffer;
     const emoji = dropPct >= stock.threshold ? "🔴" : "🟢";
-    console.log(`  ${emoji} ${stock.code}: ¥${price.toFixed(2)} | 关注价 ¥${ref.toFixed(2)} | 跌幅 ${(dropPct * 100).toFixed(1)}%`);
+    console.log(`  ${emoji} ${stock.code}: ¥${price.toFixed(2)} | 关注价 ¥${ref} | 跌幅 ${(dropPct * 100).toFixed(1)}%`);
 
     if (dropPct >= stock.threshold) {
       const prev = state[stock.code];
@@ -126,12 +130,13 @@ async function main() {
         state[stock.code] = { dropPct, price, time: now };
         hadAlert = true;
       } else {
-        console.log(`  ⏭️ ${stock.code}: 已告警过（${(prev.dropPct * 100).toFixed(1)}%），跳过`);
+        console.log(`  ⏭️ ${stock.code}: 已告警过，回升至 ${(recoveryLine * 100).toFixed(0)}% 以上才会重置`);
       }
-    } else {
+    } else if (dropPct < recoveryLine) {
+      // 必须回升到 recoveryLine 以上才重置状态，防止阈值线附近来回触发
       if (state[stock.code]) {
         delete state[stock.code];
-        console.log(`  ↻ ${stock.code}: 回升至阈值以上，重置告警状态`);
+        console.log(`  ↻ ${stock.code}: 回升至 ${(recoveryLine * 100).toFixed(0)}% 以上，重置告警状态`);
       }
     }
   }
