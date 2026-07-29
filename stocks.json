@@ -1,4 +1,4 @@
 [
-  { "code": "000001", "referencePrice": 15.00, "threshold": 0.4 },
-  { "code": "600519", "referencePrice": 1800.00, "threshold": 0.3 }
+  { "code": "000001", "referencePrice": 15.00, "threshold": 40 },
+  { "code": "600519", "referencePrice": 1800.00, "threshold": 30 }
 ]

@@ -15,8 +15,8 @@ function loadStocks() {
   return raw.map(s => ({
     code: s.code,
     referencePrice: s.referencePrice,
-    threshold: s.threshold || 0.4,
-    recoveryBuffer: s.recoveryBuffer || 0.05,  // 回升缓冲区，默认 5%
+    threshold: (s.threshold || 40) / 100,
+    recoveryBuffer: (s.recoveryBuffer || 5) / 100,  // 回升缓冲区，默认 5%
   }));
 }
 
