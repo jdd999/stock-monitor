@@ -39,7 +39,7 @@ async function sendAlert(stock, currentPrice, dropPct) {
   }
   const title = `📉 ${stock.code} 跌幅告警`;
   const desp = [
-    `**股票代码**: ${stock.code}`,
+    `**股票**: ${stock.code}`,
     `**当前价格**: ¥${currentPrice.toFixed(2)}`,
     `**关注价格**: ¥${stock.referencePrice.toFixed(2)}`,
     `**跌幅**: ${(dropPct * 100).toFixed(1)}%`,

@@ -1,4 +1,4 @@
 [
-  { "code": "000001", "referencePrice": 15.00, "threshold": 40 },
-  { "code": "600519", "referencePrice": 1800.00, "threshold": 30 }
+  { "code": "000001", "name": "平安银行", "referencePrice": 15.00, "threshold": 40, "date": "2026-07-29" },
+  { "code": "600519", "name": "贵州茅台", "referencePrice": 1800.00, "threshold": 30, "date": "2026-07-29" }
 ]
